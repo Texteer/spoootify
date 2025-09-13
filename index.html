@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotify Style Artist Page</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: white;
+    }
+
+    .header {
+      position: relative;
+      height: 300px;
+      display: flex;
+      align-items: flex-end;
+      padding: 20px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .header h1 {
+      font-size: 60px;
+      margin: 0;
+    }
+
+    .stats {
+      font-size: 14px;
+      color: #b3b3b3;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background: #1DB954;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .main {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px;
+      gap: 40px;
+    }
+
+    /* SONG LIST SECTION */
+    .songs {
+      flex: 2;
+      min-width: 300px;
+    }
+
+    .song-list {
+      margin-top: 20px;
+    }
+
+    .song {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #333;
+    }
+
+    .song-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .song img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .song-title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .song-streams, .song-length {
+      font-size: 14px;
+      color: #b3b3b3;
+    }
+
+    audio {
+      margin-top: 5px;
+      width: 200px;
+    }
+
+    /* ARTIST PICK SECTION */
+    .artist-pick {
+      flex: 1;
+      background: #181818;
+      padding: 20px;
+      border-radius: 10px;
+      min-width: 250px;
+      height: fit-content;
+    }
+
+    .artist-pick h2 {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+    .pick-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .pick-card img {
+      width: 150px;
+      height: 150px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      object-fit: cover;
+    }
+
+    .pick-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .pick-sub {
+      font-size: 14px;
+      color: #b3b3b3;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header" style="background-image: url('assets/background.jpg');">
+    <h1 id="artist-name">Lady Gaga</h1>
+  </div>
+
+  <div class="main">
+    <!-- SONGS SECTION -->
+    <div class="songs">
+      <div class="stats">98,924,917 monthly listeners</div>
+      <button class="btn">Play</button>
+      <button class="btn" style="background:#333;">Follow</button>
+
+      <!-- SONG LIST -->
+      <div class="song-list" id="song-list"></div>
+    </div>
+
+    <!-- ARTIST PICK SECTION -->
+    <div class="artist-pick" id="artist-pick">
+      <h2>Artist Pick</h2>
+      <div class="pick-card">
+        <img src="assets/pick-cover.jpg" alt="pick cover">
+        <div class="pick-title">The Dead Dance</div>
+        <div class="pick-sub">Single · Posted by Artist</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Song data (edit this with your own songs!)
+    const songs = [
+      {
+        title: "Die With A Smile",
+        streams: "2,944,087,425",
+        length: "4:11",
+        cover: "assets/cover1.jpg",
+        file: "assets/song1.mp3"
+      },
+      {
+        title: "Poker Face",
+        streams: "1,847,477,442",
+        length: "3:57",
+        cover: "assets/cover2.jpg",
+        file: "assets/song2.mp3"
+      },
+      {
+        title: "Shallow",
+        streams: "2,877,541,457",
+        length: "3:35",
+        cover: "assets/cover3.jpg",
+        file: "assets/song3.mp3"
+      }
+    ];
+
+    const songList = document.getElementById("song-list");
+
+    songs.forEach(song => {
+      const songDiv = document.createElement("div");
+      songDiv.classList.add("song");
+
+      songDiv.innerHTML = `
+        <div class="song-info">
+          <img src="${song.cover}" alt="cover">
+          <div>
+            <div class="song-title">${song.title}</div>
+            <div class="song-streams">${song.streams} streams</div>
+          </div>
+        </div>
+        <div>
+          <div class="song-length">${song.length}</div>
+          <audio controls>
+            <source src="${song.file}" type="audio/mpeg">
+            Your browser does not support the audio tag.
+          </audio>
+        </div>
+      `;
+      songList.appendChild(songDiv);
+    });
+  </script>
+
+</body>
+</html>
