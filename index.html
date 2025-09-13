@@ -67,6 +67,11 @@
       justify-content: space-between;
       padding: 10px 0;
       border-bottom: 1px solid #333;
+      cursor: pointer;
+    }
+
+    .song:hover {
+      background: #1a1a1a;
     }
 
     .song-info {
@@ -90,11 +95,6 @@
     .song-streams, .song-length {
       font-size: 14px;
       color: #b3b3b3;
-    }
-
-    audio {
-      margin-top: 5px;
-      width: 200px;
     }
 
     /* ARTIST PICK SECTION */
@@ -137,6 +137,106 @@
       color: #b3b3b3;
       margin-top: 5px;
     }
+
+    /* NOW PLAYING SIDEBAR */
+    .now-playing {
+      margin-top: 40px;
+      background: #181818;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .now-playing img {
+      width: 200px;
+      height: 200px;
+      border-radius: 10px;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+
+    .now-playing-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .now-playing-artist {
+      font-size: 14px;
+      color: #b3b3b3;
+    }
+
+    /* BOTTOM PLAYER */
+    .player {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #181818;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      border-top: 1px solid #333;
+    }
+
+    .player-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .player-info img {
+      width: 50px;
+      height: 50px;
+      border-radius: 5px;
+      object-fit: cover;
+    }
+
+    .player-song {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .player-song-title {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .player-song-artist {
+      font-size: 12px;
+      color: #b3b3b3;
+    }
+
+    .controls {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 5px;
+    }
+
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .progress input {
+      flex: 1;
+    }
+
+    .extra {
+      flex: 1;
+      text-align: right;
+      color: #b3b3b3;
+    }
   </style>
 </head>
 <body>
@@ -157,22 +257,60 @@
       <div class="song-list" id="song-list"></div>
     </div>
 
-    <!-- ARTIST PICK SECTION -->
-    <div class="artist-pick" id="artist-pick">
-      <h2>Artist Pick</h2>
-      <div class="pick-card">
-        <img src="assets/pick-cover.jpg" alt="pick cover">
-        <div class="pick-title">The Dead Dance</div>
-        <div class="pick-sub">Single · Posted by Artist</div>
+    <!-- ARTIST PICK + NOW PLAYING -->
+    <div>
+      <div class="artist-pick">
+        <h2>Artist Pick</h2>
+        <div class="pick-card">
+          <img src="assets/pick-cover.jpg" alt="pick cover">
+          <div class="pick-title">The Dead Dance</div>
+          <div class="pick-sub">Single · Posted by Artist</div>
+        </div>
+      </div>
+
+      <div class="now-playing" id="now-playing">
+        <h2>Now Playing</h2>
+        <img src="assets/cover1.jpg" alt="cover" id="np-cover">
+        <div class="now-playing-title" id="np-title">Select a song</div>
+        <div class="now-playing-artist" id="np-artist">---</div>
       </div>
     </div>
   </div>
 
+  <!-- BOTTOM PLAYER -->
+  <div class="player">
+    <div class="player-info">
+      <img src="assets/cover1.jpg" id="player-cover" alt="">
+      <div class="player-song">
+        <div class="player-song-title" id="player-title">---</div>
+        <div class="player-song-artist" id="player-artist">---</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="buttons">
+        <button id="prev">⏮</button>
+        <button id="play-pause">▶️</button>
+        <button id="next">⏭</button>
+      </div>
+      <div class="progress">
+        <span id="current-time">0:00</span>
+        <input type="range" id="seek" value="0" min="0" max="100">
+        <span id="duration">0:00</span>
+      </div>
+    </div>
+
+    <div class="extra">🔊</div>
+  </div>
+
+  <audio id="audio"></audio>
+
   <script>
-    // Song data (edit this with your own songs!)
+    // Song data
     const songs = [
       {
         title: "Die With A Smile",
+        artist: "Lady Gaga",
         streams: "2,944,087,425",
         length: "4:11",
         cover: "assets/cover1.jpg",
@@ -180,6 +318,7 @@
       },
       {
         title: "Poker Face",
+        artist: "Lady Gaga",
         streams: "1,847,477,442",
         length: "3:57",
         cover: "assets/cover2.jpg",
@@ -187,6 +326,7 @@
       },
       {
         title: "Shallow",
+        artist: "Lady Gaga & Bradley Cooper",
         streams: "2,877,541,457",
         length: "3:35",
         cover: "assets/cover3.jpg",
@@ -195,8 +335,26 @@
     ];
 
     const songList = document.getElementById("song-list");
+    const audio = document.getElementById("audio");
+    const playPauseBtn = document.getElementById("play-pause");
+    const prevBtn = document.getElementById("prev");
+    const nextBtn = document.getElementById("next");
+    const seekBar = document.getElementById("seek");
+    const currentTimeEl = document.getElementById("current-time");
+    const durationEl = document.getElementById("duration");
 
-    songs.forEach(song => {
+    const npCover = document.getElementById("np-cover");
+    const npTitle = document.getElementById("np-title");
+    const npArtist = document.getElementById("np-artist");
+
+    const playerCover = document.getElementById("player-cover");
+    const playerTitle = document.getElementById("player-title");
+    const playerArtist = document.getElementById("player-artist");
+
+    let currentSongIndex = null;
+
+    // Load songs into list
+    songs.forEach((song, index) => {
       const songDiv = document.createElement("div");
       songDiv.classList.add("song");
 
@@ -210,15 +368,84 @@
         </div>
         <div>
           <div class="song-length">${song.length}</div>
-          <audio controls>
-            <source src="${song.file}" type="audio/mpeg">
-            Your browser does not support the audio tag.
-          </audio>
         </div>
       `;
+
+      songDiv.addEventListener("click", () => loadSong(index));
       songList.appendChild(songDiv);
     });
-  </script>
 
+    // Load song into player
+    function loadSong(index) {
+      currentSongIndex = index;
+      const song = songs[index];
+      audio.src = song.file;
+      audio.play();
+
+      // Update Now Playing sidebar
+      npCover.src = song.cover;
+      npTitle.textContent = song.title;
+      npArtist.textContent = song.artist;
+
+      // Update bottom player
+      playerCover.src = song.cover;
+      playerTitle.textContent = song.title;
+      playerArtist.textContent = song.artist;
+      playPauseBtn.textContent = "⏸️";
+    }
+
+    // Play/Pause button
+    playPauseBtn.addEventListener("click", () => {
+      if (audio.paused) {
+        audio.play();
+        playPauseBtn.textContent = "⏸️";
+      } else {
+        audio.pause();
+        playPauseBtn.textContent = "▶️";
+      }
+    });
+
+    // Next song
+    nextBtn.addEventListener("click", () => {
+      if (currentSongIndex !== null) {
+        let nextIndex = (currentSongIndex + 1) % songs.length;
+        loadSong(nextIndex);
+      }
+    });
+
+    // Previous song
+    prevBtn.addEventListener("click", () => {
+      if (currentSongIndex !== null) {
+        let prevIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+        loadSong(prevIndex);
+      }
+    });
+
+    // Auto play next when song ends
+    audio.addEventListener("ended", () => {
+      let nextIndex = (currentSongIndex + 1) % songs.length;
+      loadSong(nextIndex);
+    });
+
+    // Update seek bar
+    audio.addEventListener("timeupdate", () => {
+      const progress = (audio.currentTime / audio.duration) * 100;
+      seekBar.value = progress || 0;
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+      durationEl.textContent = formatTime(audio.duration);
+    });
+
+    // Seek functionality
+    seekBar.addEventListener("input", () => {
+      audio.currentTime = (seekBar.value / 100) * audio.duration;
+    });
+
+    function formatTime(sec) {
+      if (isNaN(sec)) return "0:00";
+      const minutes = Math.floor(sec / 60);
+      const seconds = Math.floor(sec % 60).toString().padStart(2, "0");
+      return `${minutes}:${seconds}`;
+    }
+  </script>
 </body>
 </html>
